@@ -1,0 +1,38 @@
+{
+    "name": "cauegonzalez/gzlayers",
+    "description": "This package creates a layer structure to organize your laravel projects",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "crud",
+        "crud generator",
+        "layers architecture",
+        "laravel crud generator"
+    ],
+    "license": "GNU GPLv3",
+    "require": {
+        "php": "^7.1.3",
+        "laravel/framework": "^5.6",
+        "coenjacobs/eloquent-composite-primary-keys": "^1.0",
+        "doctrine/dbal": "^2.9"
+    },
+    "authors": [
+        {
+            "name": "Cauê Gonzalez",
+            "email": "cauegonzalez@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CaueGonzalez\\GzLayers\\": "packages/cauegonzalez/gzlayers/src"
+        }
+    },
+    "extra": {
+        "laravel": {
+          "providers": [
+            "CaueGonzalez\\GzLayers\\GzLayersServiceProvider"
+          ]
+        }
+    },
+    "minimum-stability": "dev"
+}
