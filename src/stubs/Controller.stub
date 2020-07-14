@@ -1,0 +1,91 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\{{modelName}};
+use App\Http\Requests\{{modelName}}Request;
+use App\Http\Resources\{{modelName}}Resource;
+use App\BO\{{modelName}}BO;
+
+class {{modelName}}Controller extends Controller
+{
+    /**
+     * Return initialization page data
+     *
+     * @return  \Illuminate\Http\Response
+     */
+    public function initialize()
+    {
+        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
+        ${{modelNamePluralLowerCase}} = ${{modelNameSingularLowerCase}}BO->initialize();
+
+        return {{modelName}}Resource::collection(${{modelNamePluralLowerCase}});
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
+        ${{modelNamePluralLowerCase}} = ${{modelNameSingularLowerCase}}BO->index();
+
+        return {{modelName}}Resource::collection(${{modelNamePluralLowerCase}});
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\{{modelName}}Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store({{modelName}}Request $request)
+    {
+        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
+        ${{modelNameSingularLowerCase}} = ${{modelNameSingularLowerCase}}BO->store($request);
+
+        return new {{modelName}}Resource(${{modelNameSingularLowerCase}});
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\{{modelName}}  ${{modelNameSingularLowerCase}}
+     * @return \Illuminate\Http\Response
+     */
+    public function show({{modelName}} ${{modelNameSingularLowerCase}})
+    {
+        return new {{modelName}}Resource(${{modelNameSingularLowerCase}});
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\{{modelName}}Request  $request
+     * @param  \App\Models\{{modelName}}  ${{modelNameSingularLowerCase}}
+     * @return \Illuminate\Http\Response
+     */
+    public function update({{modelName}}Request $request, {{modelName}} ${{modelNameSingularLowerCase}})
+    {
+        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
+        ${{modelNameSingularLowerCase}} = ${{modelNameSingularLowerCase}}BO->update($request, ${{modelNameSingularLowerCase}});
+
+        return new {{modelName}}Resource(${{modelNameSingularLowerCase}});
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\{{modelName}}  ${{modelNameSingularLowerCase}}
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy({{modelName}} ${{modelNameSingularLowerCase}})
+    {
+        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
+        ${{modelNameSingularLowerCase}}BO->destroy(${{modelNameSingularLowerCase}});
+
+        return response()->json("DELETED", 204);
+    }
+}

@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Repositories;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Models\{{modelName}};
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+class {{modelName}}Repository
+{
+    public function __construct()
+    {
+    }
+
+    /**
+     * @return LengthAwarePaginator
+     */
+    public static function index(): LengthAwarePaginator
+    {
+        return {{modelName}}::paginate();
+    }
+
+    /**
+     * @return Collection
+     */
+    public static function findActive{{modelNamePlural}}($columns = ['id','name']): Collection
+    {
+        return {{modelName}}::where('status', 'A')->get($columns);
+    }
+
+    /**
+     * @return {{modelName}}
+     */
+    public static function store($array{{modelName}}): {{modelName}}
+    {
+        return {{modelName}}::create($array{{modelName}});
+    }
+
+    /**
+     * @return bool
+     */
+    public static function update($array{{modelName}}, ${{modelNameSingularLowerCase}}): bool
+    {
+        return ${{modelNameSingularLowerCase}}->update($array{{modelName}});
+    }
+
+    /**
+     * @return bool
+     */
+    public static function destroy(${{modelNameSingularLowerCase}}): bool
+    {
+        return ${{modelNameSingularLowerCase}}->delete();
+    }
+
+}

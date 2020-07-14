@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+/**
+ * If this model has a composite primary key, use the trait HasCompositePrimaryKey, uncommenting the following lines:
+ * * use CoenJacobs\EloquentCompositePrimaryKeys\HasCompositePrimaryKey;
+ * * use HasCompositePrimaryKey;
+ */
+// use CoenJacobs\EloquentCompositePrimaryKeys\HasCompositePrimaryKey;
+
+use Illuminate\Database\Eloquent\Model;
+
+class {{modelName}} extends Model
+{
+    use Traits\Scope;
+    // use HasCompositePrimaryKey;
+
+    protected $guarded = ['id'];{{tableDeclaration}}{{timestamps}}
+
+    /**
+     * Attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        // "name",
+    ];
+}

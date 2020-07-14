@@ -1,0 +1,33 @@
+<?php
+namespace App\Resources\Traits;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+/**
+ * Defining generic scope to be reused in models to assist in queries
+ */
+trait PrepareTrait
+{
+    /**
+     * This method is the core of this trait. It will call the other methods dynamically
+     *
+     * @param Request $request
+     * @param object $object optional parameter, usually a model instance
+     * @return void
+     */
+    public function prepare(Request $request, $object = null)
+    {
+        /**
+         * The creation of this array is to allow a dynamic quantity of parameters.
+         * * Just prepare the array accordingly your necessity
+         */
+        $params = [
+            'request' => $request,
+            'object' => $object,
+        ];
+
+        $method = "prepare".Str::ucfirst(debug_backtrace()[1]['function']);
+        return $this->$method($params);
+    }
+}

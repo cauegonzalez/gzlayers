@@ -1,0 +1,80 @@
+<?php
+
+namespace App\BO;
+
+use App\Repositories\{{modelName}}Repository;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\BO\Traits\{{modelName}}Trait;
+use App\Models\{{modelName}};
+
+class {{modelName}}BO
+{
+    use {{modelName}}Trait;
+
+    /**
+     * Return initialization page data
+     *
+     * @return Object
+     */
+    public function initialize(): Object
+    {
+        // Your code
+
+        return new \stdClass();
+    }
+
+    /**
+     * Displays a resource's list
+     *
+     * @return LengthAwarePaginator
+     */
+    public function index(): LengthAwarePaginator
+    {
+        return {{modelName}}Repository::index();
+    }
+
+    /**
+    * Get only active resources
+    *
+    * @return Collection
+    */
+    public function findActive{{modelNamePluralLowerCase}}(): Collection
+    {
+        return {{modelName}}Repository::findActive{{modelNamePluralLowerCase}}();
+    }
+
+    /**
+     * Store a new resource in storage
+     *
+     * @param \App\Http\Requests\{{modelName}}Request  $request
+     * @return {{modelName}}
+     */
+    public function store($request): {{modelName}}
+    {
+        return {{modelName}}Repository::store($this->prepare($request));
+    }
+
+    /**
+     * Update an specific resource in storage.
+     *
+     * @param \App\Http\Requests\{{modelName}}Request  $request
+     * @param \App\Models\{{modelName}}  ${{modelNameSingularLowerCase}}
+     * @return bool
+     */
+    public function update($request, ${{modelNameSingularLowerCase}}): bool
+    {
+        return {{modelName}}Repository::update($this->prepare($request, ${{modelNameSingularLowerCase}}), ${{modelNameSingularLowerCase}});
+    }
+
+    /**
+     * Delete an specific resource from storage.
+     *
+     * @param \App\Models\{{modelName}}  ${{modelNameSingularLowerCase}}
+     * @return bool
+     */
+    public function destroy(${{modelNameSingularLowerCase}}): bool
+    {
+        return {{modelName}}Repository::destroy(${{modelNameSingularLowerCase}});
+    }
+}
