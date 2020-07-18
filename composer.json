@@ -23,7 +23,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "CaueGonzalez\\GzLayers\\": "packages/cauegonzalez/gzlayers/src"
+            "CaueGonzalez\\GzLayers\\": "cauegonzalez/gzlayers/src"
         }
     },
     "extra": {
