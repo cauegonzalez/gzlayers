@@ -29,7 +29,7 @@ class CRUDGenerator extends Command
      */
     protected $description = 'Create entire CRUD skeleton with a multilayer structure';
 
-        /**
+    /**
      *
      * Generator support instance
      *
@@ -186,6 +186,10 @@ class CRUDGenerator extends Command
         }
         $this->generator->resource($name);
         $this->info("Generated {$name} Resource!");
+        $prepareTraitGenerated = $this->generator->prepareTrait();
+        if ($prepareTraitGenerated) {
+            $this->info("Generated Prepare Trait!");
+        }
         $this->generator->trait($name);
         $this->info("Generated {$name} Trait!");
         $this->comment("-----");
