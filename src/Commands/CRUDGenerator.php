@@ -27,7 +27,7 @@ class CRUDGenerator extends Command
      *
      * @var string
      */
-    protected $description = 'Create business object class (BO) with a multilayer structure';
+    protected $description = 'Create entire CRUD skeleton with a multilayer structure';
 
         /**
      *
