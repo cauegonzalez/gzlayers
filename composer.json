@@ -13,7 +13,7 @@
     "require": {
         "php": "^7.1.3",
         "doctrine/dbal": "^2.9",
-        "mopo922/laravel-treats": "dev-master"
+        "mopo922/laravel-treats": "^2.0"
     },
     "authors": [
         {
