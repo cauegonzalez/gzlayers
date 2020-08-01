@@ -70,9 +70,13 @@ class {{modelName}}Controller extends Controller
     public function update({{modelName}}Request $request, {{modelName}} ${{modelNameSingularLowerCase}})
     {
         ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
-        ${{modelNameSingularLowerCase}} = ${{modelNameSingularLowerCase}}BO->update($request, ${{modelNameSingularLowerCase}});
+        $updated = ${{modelNameSingularLowerCase}}BO->update($request, ${{modelNameSingularLowerCase}});
 
-        return new {{modelName}}Resource(${{modelNameSingularLowerCase}});
+        if ($updated)
+        {
+            return new {{modelName}}Resource(${{modelNameSingularLowerCase}});
+        }
+        return response()->json([], 202);
     }
 
     /**
