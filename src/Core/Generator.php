@@ -2,6 +2,7 @@
 
 namespace CaueGonzalez\GzLayers\Core;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
@@ -35,6 +36,28 @@ class Generator
         $this->files = $files;
         $this->str   = $str;
         $this->stub  = $stub;
+    }
+
+    /**
+     * Generate BO from BO.stub
+     *
+     * @param $name
+     * @return bool|int
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function bo($name, $overwrite = true)
+    {
+        $content = $this->stub->parseStub('BO', $name);
+
+        if (!$this->files->exists("app/BO/")) {
+            $this->files->makeDirectory("app/BO/");
+        }
+        $path = "app/BO/{$name}BO.php";
+        if (!$overwrite && $this->files->exists($path)) {
+            $uniqueId = Carbon::now()->format('YmiHis');
+            $path = "app/BO/{$name}_{$uniqueId}_BO.php";
+        }
+        return $this->files->put($path, $content);
     }
 
     /**
@@ -174,23 +197,6 @@ class Generator
             $this->files->makeDirectory("app/Http/Resources/");
         }
         return $this->files->put("app/Http/Resources/{$name}Resource.php", $content);
-    }
-
-    /**
-     * Generate BO from BO.stub
-     *
-     * @param $name
-     * @return bool|int
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    public function bo($name)
-    {
-        $content = $this->stub->parseStub('BO', $name);
-
-        if (!$this->files->exists("app/BO/")) {
-            $this->files->makeDirectory("app/BO/");
-        }
-        return $this->files->put("app/BO/{$name}BO.php", $content);
     }
 
     /**
