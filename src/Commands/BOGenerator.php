@@ -122,14 +122,14 @@ class BOGenerator extends Command
 
 
     /**
-     * Generate CRUD in interactive mode
+     * Generate BO in interactive mode
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function interactive()
     {
         $this->info("Welcome in Interactive mode");
 
-        $this->comment("This command will guide you through creating your CRUD");
+        $this->comment("This command will guide you through creating your BO");
         $name = $this->ask('What is name of your Model?');
         $name = ucwords($name);
         $confirmOverwrite = $this->ask("If the file {$name}BO already exists, do you want it to be overwritten? [Y,n]") ?? 'y';
