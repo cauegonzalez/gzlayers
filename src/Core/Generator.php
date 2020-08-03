@@ -42,6 +42,7 @@ class Generator
      * Generate BO from BO.stub
      *
      * @param $name
+     * @param $overwrite
      * @return bool|int
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
@@ -56,6 +57,25 @@ class Generator
         if (!$overwrite && $this->files->exists($path)) {
             $uniqueId = Carbon::now()->format('YmiHis');
             $path = "app/BO/{$name}BO_{$uniqueId}.php";
+        }
+        return $this->files->put($path, $content);
+    }
+
+    /**
+     * Create controller from controller.stub
+     *
+     * @param $name string name of model class
+     * @param $overwrite
+     * @return bool|int
+     */
+    public function controller($name, $overwrite = true)
+    {
+        $content = $this->stub->parseStub('Controller', $name);
+
+        $path = "app/Http/Controllers/{$name}Controller.php";
+        if (!$overwrite && $this->files->exists($path)) {
+            $uniqueId = Carbon::now()->format('YmiHis');
+            $path = "app/Http/Controllers/{$name}Controller_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
     }
@@ -155,19 +175,6 @@ class Generator
             $path = "app/BO/Traits/{$name}Trait_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
-    }
-
-    /**
-     * Create controller from controller.stub
-     *
-     * @param $name string name of model class
-     * @return bool|int
-     */
-    public function controller($name)
-    {
-        $content = $this->stub->parseStub('Controller', $name);
-
-        return $this->files->put("app/Http/Controllers/{$name}Controller.php", $content);
     }
 
     /**
