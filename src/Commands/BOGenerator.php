@@ -159,6 +159,7 @@ class BOGenerator extends Command
     /**
      * Handle data generation
      * @param $name string Model Name
+     * @param $overwrite boolean
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generate($name, $overwrite)
