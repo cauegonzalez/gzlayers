@@ -55,7 +55,7 @@ class Generator
         $path = "app/BO/{$name}BO.php";
         if (!$overwrite && $this->files->exists($path)) {
             $uniqueId = Carbon::now()->format('YmiHis');
-            $path = "app/BO/{$name}_{$uniqueId}_BO.php";
+            $path = "app/BO/{$name}BO_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
     }
@@ -142,14 +142,19 @@ class Generator
      *
      * @return bool|int
      */
-    public function trait($name)
+    public function trait($name, $overwrite = true)
     {
         $content = $this->stub->parseStub('Trait', $name);
 
         if (!$this->files->exists("app/BO/Traits/")) {
             $this->files->makeDirectory("app/BO/Traits/");
         }
-        return $this->files->put("app/BO/Traits/{$name}Trait.php", $content);
+        $path = "app/BO/Traits/{$name}Trait.php";
+        if (!$overwrite && $this->files->exists($path)) {
+            $uniqueId = Carbon::now()->format('YmiHis');
+            $path = "app/BO/Traits/{$name}Trait_{$uniqueId}.php";
+        }
+        return $this->files->put($path, $content);
     }
 
     /**
