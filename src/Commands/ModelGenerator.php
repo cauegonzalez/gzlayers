@@ -20,7 +20,8 @@ class ModelGenerator extends Command
     {--table=default : Table name (plural) for example users | Default is generated-plural}
     {--timestamps=true : Set default timestamps}
     {--interactive=false : Interactive mode}
-    {--all=false : Interactive mode}';
+    {--all=false : Interactive mode}
+    {--overwrite=true : If file exists, determine if overwrite}';
 
     /**
      * The console command description.
@@ -91,7 +92,10 @@ class ModelGenerator extends Command
         $name = ucwords($this->argument('name'));
         $table = $this->option('table');
         $timestamps = ($this->option('timestamps') == 'false' ? false : true);
-        $this->generate($name, $table, $timestamps);
+
+        $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+
+        $this->generate($name, $table, $timestamps, $overwrite);
         return 0;
     }
 
@@ -113,7 +117,9 @@ class ModelGenerator extends Command
                 $columns = Schema::getColumnListing($table);
                 $name = ucwords($this->str->singular($table));
                 in_array('created_at', $columns) ? $timestamps = true : $timestamps = false;
-                $this->generate($name, $table, $timestamps);
+                $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+
+                $this->generate($name, $table, $timestamps, $overwrite);
             }
         }
         catch (QueryException $exception) {
@@ -140,6 +146,18 @@ class ModelGenerator extends Command
         $table = strtolower($table);
         $choice = $this->choice('Do your table has timestamps column?', ['No', 'Yes'], 0);
         $choice === "Yes" ? $timestamps = true : $timestamps = false;
+
+        $confirmOverwrite = $this->ask("If the file {$name}BO already exists, do you want it to be overwritten? [Y,n]") ?? 'y';
+
+        $overwrite = true;
+        if (strtolower($confirmOverwrite) === 'n') {
+            $overwrite = false;
+        }
+        elseif (strtolower($confirmOverwrite) !== 'y') {
+            $this->error("Aborted!");
+            return;
+        }
+
         $this->info("Please confim this data");
         $this->line("Name: $name");
         $this->line("Table: $table");
@@ -147,7 +165,7 @@ class ModelGenerator extends Command
 
         $confirm = $this->ask("Press y to confirm, type N to restart");
         if ($confirm == "y") {
-            $this->generate($name, $table, $timestamps);
+            $this->generate($name, $table, $timestamps, $overwrite);
             return;
         }
         $this->error("Aborted!");
@@ -158,12 +176,13 @@ class ModelGenerator extends Command
      * @param $name string Model Name
      * @param $table string Table Name
      * @param $timestamps boolean
+     * @param $overwrite boolean
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function generate($name, $table, $timestamps)
+    protected function generate($name, $table, $timestamps, $overwrite)
     {
         $this->comment("Generating {$name} Model");
-        $this->generator->model($name, $table, $timestamps);
+        $this->generator->model($name, $table, $timestamps, $overwrite);
         $this->info("Generated {$name} Model!");
 
         $scopeTraitGenerated = $this->generator->scopeTrait();

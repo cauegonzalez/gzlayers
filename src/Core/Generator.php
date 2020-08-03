@@ -86,9 +86,10 @@ class Generator
      * @param $name string name of model class
      * @param $table string name of DB table
      * @param $timestamps boolean set timestamps true | false
+     * @param $overwrite boolean
      * @return bool|int
      */
-    public function model($name, $table, $timestamps)
+    public function model($name, $table, $timestamps, $overwrite)
     {
         $tableDeclaration = $table !== "default" ? "\n\n".'    protected $table = "'.$table.'";' : "";
 
@@ -105,7 +106,13 @@ class Generator
         if (!$this->files->exists("app/Models/")) {
             $this->files->makeDirectory("app/Models/");
         }
-        return $this->files->put("app/Models/{$name}.php", $content);
+
+        $path = "app/Models/{$name}.php";
+        if (!$overwrite && $this->files->exists($path)) {
+            $uniqueId = Carbon::now()->format('YmiHis');
+            $path = "app/Models/{$name}_{$uniqueId}.php";
+        }
+        return $this->files->put($path, $content);
     }
 
     /**
