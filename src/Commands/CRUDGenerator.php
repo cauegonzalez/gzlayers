@@ -20,7 +20,8 @@ class CRUDGenerator extends Command
     {--table=default : Table name (plural) for example users | Default is generated-plural}
     {--timestamps=false : Set default timestamps}
     {--interactive=false : Interactive mode}
-    {--all=false : Interactive mode}';
+    {--all=false : Interactive mode}
+    {--overwrite=true : If file exists, determine if overwrite}';
 
     /**
      * The console command description.
@@ -91,7 +92,9 @@ class CRUDGenerator extends Command
         $name = ucwords($this->argument('name'));
         $table = $this->option('table');
         $timestamps = $this->option('timestamps');
-        $this->generate($name, $table, $timestamps);
+        $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+
+        $this->generate($name, $table, $timestamps, $overwrite);
         return 0;
     }
 
@@ -113,7 +116,9 @@ class CRUDGenerator extends Command
                 $columns = Schema::getColumnListing($table);
                 $name = ucwords($this->str->singular($table));
                 in_array('created_at', $columns) ? $timestamps = true : $timestamps = false;
-                $this->generate($name, $table, $timestamps);
+                $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+
+                $this->generate($name, $table, $timestamps, $overwrite);
             }
         }
         catch (QueryException $exception) {
@@ -140,6 +145,18 @@ class CRUDGenerator extends Command
         $table = strtolower($table);
         $choice = $this->choice('Do your table has timestamps column?', ['No', 'Yes'], 0);
         $choice === "Yes" ? $timestamps = true : $timestamps = false;
+
+        $confirmOverwrite = $this->ask("If the files of {$name} structure already exist, do you want them to be overwritten? [Y,n]") ?? 'y';
+
+        $overwrite = true;
+        if (strtolower($confirmOverwrite) === 'n') {
+            $overwrite = false;
+        }
+        elseif (strtolower($confirmOverwrite) !== 'y') {
+            $this->error("Aborted!");
+            return;
+        }
+
         $this->info("Please confim this data");
         $this->line("Name: $name");
         $this->line("Table: $table");
@@ -147,7 +164,7 @@ class CRUDGenerator extends Command
 
         $confirm = $this->ask("Press y to confirm, type N to restart");
         if ($confirm == "y") {
-            $this->generate($name, $table, $timestamps);
+            $this->generate($name, $table, $timestamps, $overwrite);
             return;
         }
         $this->error("Aborted!");
@@ -159,38 +176,39 @@ class CRUDGenerator extends Command
      * @param $name string Model Name
      * @param $table string Table Name
      * @param $timestamps boolean
+     * @param $overwrite boolean
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function generate($name, $table, $timestamps)
+    protected function generate($name, $table, $timestamps, $overwrite)
     {
         $this->comment("Generating {$name} CRUD");
         $this->comment("...");
-        $this->generator->bo($name);
+        $this->generator->bo($name, $overwrite);
         $this->info("Generated {$name} BO!");
-        $this->generator->controller($name);
+        $this->generator->controller($name, $overwrite);
         $this->info("Generated {$name} Controller!");
-        $this->generator->model($name, $table, $timestamps);
+        $this->generator->model($name, $table, $timestamps, $overwrite);
         $this->info("Generated {$name} Model!");
         $scopeTraitGenerated = $this->generator->scopeTrait();
         if ($scopeTraitGenerated) {
             $this->info("Generated {$name} ScopeTrait");
         }
-        $this->generator->repository($name);
+        $this->generator->repository($name, $overwrite);
         $this->info("Generated {$name} Repository!");
-        $this->generator->request($name);
+        $this->generator->request($name, $overwrite);
         $this->info("Generated {$name} Request!");
         $customRulesRequestGenerated = $this->generator->customRulesRequest();
         if ($customRulesRequestGenerated) {
             $this->comment("Generating CustomRulesRequest");
             $this->info("Generated CustomRulesRequest");
         }
-        $this->generator->resource($name);
+        $this->generator->resource($name, $overwrite);
         $this->info("Generated {$name} Resource!");
         $prepareTraitGenerated = $this->generator->prepareTrait();
         if ($prepareTraitGenerated) {
             $this->info("Generated Prepare Trait!");
         }
-        $this->generator->trait($name);
+        $this->generator->trait($name, $overwrite);
         $this->info("Generated {$name} Trait!");
         $this->comment("-----");
     }
