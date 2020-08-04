@@ -18,7 +18,8 @@ class BOGenerator extends Command
     protected $signature = 'gzlayers:makebo
     {name=name : Class (singular) for example User}
     {--interactive=false : Interactive mode}
-    {--all=false : Interactive mode}';
+    {--all=false : Interactive mode}
+    {--overwrite=true : If file exists, determine if overwrite}';
 
     /**
      * The console command description.
@@ -87,7 +88,9 @@ class BOGenerator extends Command
 
         // If here, no interactive || all selected
         $name = ucwords($this->argument('name'));
-        $this->generate($name);
+        $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+
+        $this->generate($name, $overwrite);
         return 0;
     }
 
@@ -107,7 +110,9 @@ class BOGenerator extends Command
                 $table = ucwords(str_replace('_', ' ', $table));
                 $table = str_replace(' ', '', $table);
                 $name = ucwords($this->str->singular($table));
-                $this->generate($name);
+                $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+
+                $this->generate($name, $overwrite);
             }
         }
         catch (QueryException $exception) {
@@ -117,23 +122,34 @@ class BOGenerator extends Command
 
 
     /**
-     * Generate CRUD in interactive mode
+     * Generate BO in interactive mode
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function interactive()
     {
         $this->info("Welcome in Interactive mode");
 
-        $this->comment("This command will guide you through creating your CRUD");
+        $this->comment("This command will guide you through creating your BO");
         $name = $this->ask('What is name of your Model?');
         $name = ucwords($name);
+        $confirmOverwrite = $this->ask("If the file {$name}BO already exists, do you want it to be overwritten? [Y,n]") ?? 'y';
+
+        $overwrite = true;
+        if (strtolower($confirmOverwrite) === 'n') {
+            $overwrite = false;
+        }
+        elseif (strtolower($confirmOverwrite) !== 'y') {
+            $this->error("Aborted!");
+            return;
+        }
+
         $this->info("Please confim this data");
         $this->line("Name: $name");
         $this->line("BO: {$name}BO");
 
         $confirm = $this->ask("Press y to confirm, type N to restart");
         if ($confirm == "y") {
-            $this->generate($name);
+            $this->generate($name, $overwrite);
             return;
         }
         $this->error("Aborted!");
@@ -143,12 +159,13 @@ class BOGenerator extends Command
     /**
      * Handle data generation
      * @param $name string Model Name
+     * @param $overwrite boolean
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function generate($name)
+    protected function generate($name, $overwrite)
     {
         $this->comment("Generating {$name} BO");
-        $this->generator->bo($name);
+        $this->generator->bo($name, $overwrite);
         $this->info("Generated {$name} BO!");
     }
 }

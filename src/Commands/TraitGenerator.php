@@ -18,7 +18,8 @@ class TraitGenerator extends Command
     protected $signature = 'gzlayers:maketrait
     {name=name : Class (singular) for example User}
     {--interactive=false : Interactive mode}
-    {--all=false : Interactive mode}';
+    {--all=false : Interactive mode}
+    {--overwrite=true : If file exists, determine if overwrite}';
 
     /**
      * The console command description.
@@ -87,7 +88,9 @@ class TraitGenerator extends Command
 
         // If here, no interactive || all selected
         $name = ucwords($this->argument('name'));
-        $this->generate($name);
+        $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+
+        $this->generate($name, $overwrite);
         return 0;
     }
 
@@ -107,7 +110,9 @@ class TraitGenerator extends Command
                 $table = ucwords(str_replace('_', ' ', $table));
                 $table = str_replace(' ', '', $table);
                 $name = ucwords($this->str->singular($table));
-                $this->generate($name);
+                $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+
+                $this->generate($name, $overwrite);
             }
         }
         catch (QueryException $exception) {
@@ -127,13 +132,24 @@ class TraitGenerator extends Command
         $this->comment("This command will guide you through creating your CRUD");
         $name = $this->ask('What is name of your Model?');
         $name = ucwords($name);
+        $confirmOverwrite = $this->ask("If the file {$name}Trait already exists, do you want it to be overwritten? [Y,n]") ?? 'y';
+
+        $overwrite = true;
+        if (strtolower($confirmOverwrite) === 'n') {
+            $overwrite = false;
+        }
+        elseif (strtolower($confirmOverwrite) !== 'y') {
+            $this->error("Aborted!");
+            return;
+        }
+
         $this->info("Please confim this data");
         $this->line("Name: $name");
         $this->line("Trait: {$name}Trait");
 
         $confirm = $this->ask("Press y to confirm, type N to restart");
         if ($confirm == "y") {
-            $this->generate($name);
+            $this->generate($name, $overwrite);
             return;
         }
         $this->error("Aborted!");
@@ -145,14 +161,14 @@ class TraitGenerator extends Command
      * @param $name string Model Name
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function generate($name)
+    protected function generate($name, $overwrite)
     {
         $prepareTraitGenerated = $this->generator->prepareTrait();
         if ($prepareTraitGenerated) {
             $this->info("Generated Prepare Trait!");
         }
         $this->comment("Generating {$name} Trait");
-        $this->generator->trait($name);
+        $this->generator->trait($name, $overwrite);
         $this->info("Generated {$name} Trait!");
     }
 }
