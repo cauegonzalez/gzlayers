@@ -156,6 +156,28 @@ class Generator
         return $this->files->put($path, $content);
     }
 
+    /**
+     * Generate Request from request.stub
+     *
+     * @param $name
+     * @param $overwrite
+     * @return bool|int
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function request($name, $overwrite)
+    {
+        $content = $this->stub->parseStub('Request', $name);
+
+        if (!$this->files->exists("app/Http/Requests/")) {
+            $this->files->makeDirectory("app/Http/Requests/");
+        }
+        $path = "app/Http/Requests/{$name}Request.php";
+        if (!$overwrite && $this->files->exists($path)) {
+            $uniqueId = Carbon::now()->format('YmiHis');
+            $path = "app/Http/Requests/{$name}Request_{$uniqueId}.php";
+        }
+        return $this->files->put($path, $content);
+    }
 
     /**
      * Generate customRulesRequest class from stubs
@@ -206,23 +228,6 @@ class Generator
             $path = "app/BO/Traits/{$name}Trait_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
-    }
-
-    /**
-     * Generate Request from request.stub
-     *
-     * @param $name
-     * @return bool|int
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    public function request($name)
-    {
-        $content = $this->stub->parseStub('Request', $name);
-
-        if (!$this->files->exists("app/Http/Requests/")) {
-            $this->files->makeDirectory("app/Http/Requests/");
-        }
-        return $this->files->put("app/Http/Requests/{$name}Request.php", $content);
     }
 
     /**
