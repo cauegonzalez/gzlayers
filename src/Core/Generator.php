@@ -81,6 +81,24 @@ class Generator
     }
 
     /**
+     * Generate scope trait from stubs
+     *
+     * @return bool|int
+     */
+    public function scopeTrait()
+    {
+        $content = $this->stub->parseStub('ScopeTrait', 'Scope', [
+            'activeStatus' => 'ACTIVE',
+        ]);
+
+        if (!$this->files->exists("app/Models/Traits/")) {
+            $this->files->makeDirectory("app/Models/Traits/");
+            return $this->files->put("app/Models/Traits/Scope.php", $content);
+        }
+        return false;
+    }
+
+    /**
      * Generate model class from stubs
      *
      * @param $name string name of model class
@@ -116,22 +134,28 @@ class Generator
     }
 
     /**
-     * Generate model class from stubs
+     * Generate Repository from Repository.stub
      *
+     * @param $name
+     * @param $overwrite
      * @return bool|int
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function scopeTrait()
+    public function repository($name, $overwrite)
     {
-        $content = $this->stub->parseStub('ScopeTrait', 'Scope', [
-            'activeStatus' => 'ACTIVE',
-        ]);
+        $content = $this->stub->parseStub('Repository', $name);
 
-        if (!$this->files->exists("app/Models/Traits/")) {
-            $this->files->makeDirectory("app/Models/Traits/");
-            return $this->files->put("app/Models/Traits/Scope.php", $content);
+        if (!$this->files->exists("app/Repositories/")) {
+            $this->files->makeDirectory("app/Repositories/");
         }
-        return false;
+        $path = "app/Repositories/{$name}Repository.php";
+        if (!$overwrite && $this->files->exists($path)) {
+            $uniqueId = Carbon::now()->format('YmiHis');
+            $path = "app/Repositories/{$name}Repository_{$uniqueId}.php";
+        }
+        return $this->files->put($path, $content);
     }
+
 
     /**
      * Generate customRulesRequest class from stubs
@@ -216,23 +240,6 @@ class Generator
             $this->files->makeDirectory("app/Http/Resources/");
         }
         return $this->files->put("app/Http/Resources/{$name}Resource.php", $content);
-    }
-
-    /**
-     * Generate Repository from Repository.stub
-     *
-     * @param $name
-     * @return bool|int
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    public function repository($name)
-    {
-        $content = $this->stub->parseStub('Repository', $name);
-
-        if (!$this->files->exists("app/Repositories/")) {
-            $this->files->makeDirectory("app/Repositories/");
-        }
-        return $this->files->put("app/Repositories/{$name}Repository.php", $content);
     }
 
     /**
