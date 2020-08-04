@@ -195,6 +195,29 @@ class Generator
     }
 
     /**
+     * Generate Resource from Resource.stub
+     *
+     * @param $name
+     * @param $overwrite
+     * @return bool|int
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function resource($name, $overwrite)
+    {
+        $content = $this->stub->parseStub('Resource', $name);
+
+        if (!$this->files->exists("app/Http/Resources/")) {
+            $this->files->makeDirectory("app/Http/Resources/");
+        }
+        $path = "app/Http/Resources/{$name}Resource.php";
+        if (!$overwrite && $this->files->exists($path)) {
+            $uniqueId = Carbon::now()->format('YmiHis');
+            $path = "app/Http/Resources/{$name}Resource_{$uniqueId}.php";
+        }
+        return $this->files->put($path, $content);
+    }
+
+    /**
      * Generate model class from stubs
      *
      * @return bool|int
@@ -228,23 +251,6 @@ class Generator
             $path = "app/BO/Traits/{$name}Trait_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
-    }
-
-    /**
-     * Generate Resource from Resource.stub
-     *
-     * @param $name
-     * @return bool|int
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    public function resource($name)
-    {
-        $content = $this->stub->parseStub('Resource', $name);
-
-        if (!$this->files->exists("app/Http/Resources/")) {
-            $this->files->makeDirectory("app/Http/Resources/");
-        }
-        return $this->files->put("app/Http/Resources/{$name}Resource.php", $content);
     }
 
     /**
