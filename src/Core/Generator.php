@@ -55,7 +55,7 @@ class Generator
         }
         $path = "app/BO/{$name}BO.php";
         if (!$overwrite && $this->files->exists($path)) {
-            $uniqueId = Carbon::now()->format('YmiHis');
+            $uniqueId = Carbon::now()->format('YmdHis');
             $path = "app/BO/{$name}BO_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
@@ -74,7 +74,7 @@ class Generator
 
         $path = "app/Http/Controllers/{$name}Controller.php";
         if (!$overwrite && $this->files->exists($path)) {
-            $uniqueId = Carbon::now()->format('YmiHis');
+            $uniqueId = Carbon::now()->format('YmdHis');
             $path = "app/Http/Controllers/{$name}Controller_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
@@ -127,7 +127,7 @@ class Generator
 
         $path = "app/Models/{$name}.php";
         if (!$overwrite && $this->files->exists($path)) {
-            $uniqueId = Carbon::now()->format('YmiHis');
+            $uniqueId = Carbon::now()->format('YmdHis');
             $path = "app/Models/{$name}_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
@@ -150,7 +150,7 @@ class Generator
         }
         $path = "app/Repositories/{$name}Repository.php";
         if (!$overwrite && $this->files->exists($path)) {
-            $uniqueId = Carbon::now()->format('YmiHis');
+            $uniqueId = Carbon::now()->format('YmdHis');
             $path = "app/Repositories/{$name}Repository_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
@@ -173,7 +173,7 @@ class Generator
         }
         $path = "app/Http/Requests/{$name}Request.php";
         if (!$overwrite && $this->files->exists($path)) {
-            $uniqueId = Carbon::now()->format('YmiHis');
+            $uniqueId = Carbon::now()->format('YmdHis');
             $path = "app/Http/Requests/{$name}Request_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
@@ -211,7 +211,7 @@ class Generator
         }
         $path = "app/Http/Resources/{$name}Resource.php";
         if (!$overwrite && $this->files->exists($path)) {
-            $uniqueId = Carbon::now()->format('YmiHis');
+            $uniqueId = Carbon::now()->format('YmdHis');
             $path = "app/Http/Resources/{$name}Resource_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
@@ -247,7 +247,7 @@ class Generator
         }
         $path = "app/BO/Traits/{$name}Trait.php";
         if (!$overwrite && $this->files->exists($path)) {
-            $uniqueId = Carbon::now()->format('YmiHis');
+            $uniqueId = Carbon::now()->format('YmdHis');
             $path = "app/BO/Traits/{$name}Trait_{$uniqueId}.php";
         }
         return $this->files->put($path, $content);
