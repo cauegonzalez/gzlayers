@@ -115,10 +115,10 @@ class CRUDGenerator extends Command
                 $table = str_replace(' ', '', $table);
                 $columns = Schema::getColumnListing($table);
                 $name = ucwords($this->str->singular($table));
-                in_array('created_at', $columns) ? $timestamps = true : $timestamps = false;
+                $timestamps = in_array('created_at', $columns) ? true : false;
                 $overwrite = ($this->option('overwrite') == 'false' ? false : true);
 
-                $this->generate($name, $table, $timestamps, $overwrite);
+                $this->generate($name, 'default', $timestamps, $overwrite);
             }
         }
         catch (QueryException $exception) {
