@@ -28,7 +28,8 @@ class {{modelName}}Repository
      */
     public static function findActive{{modelNamePlural}}($columns = ['id','name']): Collection
     {
-        return {{modelName}}::where('status', 'A')->get($columns);
+        return {{modelName}}::active()
+                            ->get($columns);
     }
 
     /**
