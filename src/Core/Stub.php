@@ -69,9 +69,9 @@ class Stub
     {
         $toParse = array_merge([
             'modelName'                  => $name,
-            'modelNamePlural' => $this->str->plural($name),
-            'modelNamePluralLowerCase'   => strtolower($this->str->plural($name)),
-            'modelNameSingularLowerCase' => strtolower($name)
+            'modelNamePlural'            => $this->str->plural($name),
+            'modelNamePluralLowerCase'   => lcfirst($this->str->plural($name)),
+            'modelNameSingularLowerCase' => lcfirst($name),
         ], $args);
 
         try {
