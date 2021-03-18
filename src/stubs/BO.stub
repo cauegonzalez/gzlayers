@@ -39,9 +39,9 @@ class {{modelName}}BO
     *
     * @return Collection
     */
-    public function findActive{{modelNamePluralLowerCase}}(): Collection
+    public function findActive{{modelNamePlural}}(): Collection
     {
-        return {{modelName}}Repository::findActive{{modelNamePluralLowerCase}}();
+        return {{modelName}}Repository::findActive{{modelNamePlural}}();
     }
 
     /**
