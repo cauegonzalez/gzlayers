@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\{{modelName}};
 use App\Http\Requests\{{modelName}}Request;
 use App\Http\Resources\{{modelName}}Resource;
-use App\BO\{{modelName}}BO;
+use App\Service\{{modelName}}Service;
 
 class {{modelName}}Controller extends Controller
 {
@@ -16,8 +16,8 @@ class {{modelName}}Controller extends Controller
      */
     public function initialize()
     {
-        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
-        ${{modelNamePluralLowerCase}} = ${{modelNameSingularLowerCase}}BO->initialize();
+        ${{modelNameSingularLowerCase}}Service = new {{modelName}}Service();
+        ${{modelNamePluralLowerCase}} = ${{modelNameSingularLowerCase}}Service->initialize();
 
         return {{modelName}}Resource::collection(${{modelNamePluralLowerCase}});
     }
@@ -29,8 +29,8 @@ class {{modelName}}Controller extends Controller
      */
     public function index()
     {
-        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
-        ${{modelNamePluralLowerCase}} = ${{modelNameSingularLowerCase}}BO->index();
+        ${{modelNameSingularLowerCase}}Service = new {{modelName}}Service();
+        ${{modelNamePluralLowerCase}} = ${{modelNameSingularLowerCase}}Service->index();
 
         return {{modelName}}Resource::collection(${{modelNamePluralLowerCase}});
     }
@@ -43,8 +43,8 @@ class {{modelName}}Controller extends Controller
      */
     public function store({{modelName}}Request $request)
     {
-        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
-        ${{modelNameSingularLowerCase}} = ${{modelNameSingularLowerCase}}BO->store($request->validated());
+        ${{modelNameSingularLowerCase}}Service = new {{modelName}}Service();
+        ${{modelNameSingularLowerCase}} = ${{modelNameSingularLowerCase}}Service->store($request->validated());
 
         return new {{modelName}}Resource(${{modelNameSingularLowerCase}});
     }
@@ -69,8 +69,8 @@ class {{modelName}}Controller extends Controller
      */
     public function update({{modelName}}Request $request, {{modelName}} ${{modelNameSingularLowerCase}})
     {
-        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
-        $updated = ${{modelNameSingularLowerCase}}BO->update($request->validated(), ${{modelNameSingularLowerCase}});
+        ${{modelNameSingularLowerCase}}Service = new {{modelName}}Service();
+        $updated = ${{modelNameSingularLowerCase}}Service->update($request->validated(), ${{modelNameSingularLowerCase}});
 
         if ($updated)
         {
@@ -87,8 +87,8 @@ class {{modelName}}Controller extends Controller
      */
     public function destroy({{modelName}} ${{modelNameSingularLowerCase}})
     {
-        ${{modelNameSingularLowerCase}}BO = new {{modelName}}BO();
-        ${{modelNameSingularLowerCase}}BO->destroy(${{modelNameSingularLowerCase}});
+        ${{modelNameSingularLowerCase}}Service = new {{modelName}}Service();
+        ${{modelNamePluralLowerCase}} = ${{modelNameSingularLowerCase}}Service->destroy(${{modelNameSingularLowerCase}});
 
         return response()->json("DELETED", 204);
     }

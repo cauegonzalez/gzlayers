@@ -28,7 +28,7 @@ class RequestGenerator extends Command
      */
     protected $description = 'Create request with a multilayer structure';
 
-        /**
+    /**
      *
      * Generator support instance
      *
@@ -114,8 +114,7 @@ class RequestGenerator extends Command
 
                 $this->generate($name, $overwrite);
             }
-        }
-        catch (QueryException $exception) {
+        } catch (QueryException $exception) {
             $this->error("Error: " . $exception->getMessage());
         }
     }
@@ -137,8 +136,7 @@ class RequestGenerator extends Command
         $overwrite = true;
         if (strtolower($confirmOverwrite) === 'n') {
             $overwrite = false;
-        }
-        elseif (strtolower($confirmOverwrite) !== 'y') {
+        } elseif (strtolower($confirmOverwrite) !== 'y') {
             $this->error("Aborted!");
             return;
         }
