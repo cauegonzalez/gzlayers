@@ -29,7 +29,7 @@ class {{modelName}}Repository
     public static function findActive{{modelNamePlural}}($columns = ['id','name']): Collection
     {
         return {{modelName}}::active()
-                            ->get($columns);
+            ->get($columns);
     }
 
     /**

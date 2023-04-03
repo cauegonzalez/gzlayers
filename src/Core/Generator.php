@@ -62,7 +62,30 @@ class Generator
     }
 
     /**
-     * Create controller from controller.stub
+     * Generate Service from Service.stub
+     *
+     * @param $name
+     * @param $overwrite
+     * @return bool|int
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function service($name, $overwrite = true)
+    {
+        $content = $this->stub->parseStub('Service', $name);
+
+        if (!$this->files->exists("app/Service/")) {
+            $this->files->makeDirectory("app/Service/");
+        }
+        $path = "app/Service/{$name}Service.php";
+        if (!$overwrite && $this->files->exists($path)) {
+            $uniqueId = Carbon::now()->format('YmdHis');
+            $path = "app/Service/{$name}Service_{$uniqueId}.php";
+        }
+        return $this->files->put($path, $content);
+    }
+
+    /**
+     * Create controller from Controller.stub
      *
      * @param $name string name of model class
      * @param $overwrite
@@ -71,6 +94,25 @@ class Generator
     public function controller($name, $overwrite = true)
     {
         $content = $this->stub->parseStub('Controller', $name);
+
+        $path = "app/Http/Controllers/{$name}Controller.php";
+        if (!$overwrite && $this->files->exists($path)) {
+            $uniqueId = Carbon::now()->format('YmdHis');
+            $path = "app/Http/Controllers/{$name}Controller_{$uniqueId}.php";
+        }
+        return $this->files->put($path, $content);
+    }
+
+    /**
+     * Create controller from ControllerWithService.stub
+     *
+     * @param $name string name of model class
+     * @param $overwrite
+     * @return bool|int
+     */
+    public function controllerWithService($name, $overwrite = true)
+    {
+        $content = $this->stub->parseStub('ControllerWithService', $name);
 
         $path = "app/Http/Controllers/{$name}Controller.php";
         if (!$overwrite && $this->files->exists($path)) {
@@ -109,11 +151,11 @@ class Generator
      */
     public function model($name, $table, $timestamps, $overwrite)
     {
-        $tableDeclaration = $table !== "default" ? "\n\n".'    protected $table = "'.$table.'";' : "";
+        $tableDeclaration = $table !== "default" ? "\n\n" . '    protected $table = "' . $table . '";' : "";
 
         $timeDeclaration = "";
         if ($timestamps === false) {
-            $timeDeclaration = "\n\n".'    public $timestamps = false;';
+            $timeDeclaration = "\n\n" . '    public $timestamps = false;';
         }
 
         $content = $this->stub->parseStub('Model', $name, [
@@ -157,7 +199,7 @@ class Generator
     }
 
     /**
-     * Generate Request from request.stub
+     * Generate Request from Request.stub
      *
      * @param $name
      * @param $overwrite

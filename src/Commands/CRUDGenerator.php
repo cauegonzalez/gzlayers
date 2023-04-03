@@ -21,7 +21,8 @@ class CRUDGenerator extends Command
     {--timestamps=false : Set default timestamps}
     {--interactive=false : Interactive mode}
     {--all=false : Interactive mode}
-    {--overwrite=true : If file exists, determine if overwrite}';
+    {--overwrite=true : If file exists, determine if overwrite}
+    {--businesslayer=bo : Determines which nomenclature to use for business layer | Default is BO and the other accepted is Service}';
 
     /**
      * The console command description.
@@ -93,8 +94,9 @@ class CRUDGenerator extends Command
         $table = $this->option('table');
         $timestamps = $this->option('timestamps');
         $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+        $businessLayerNomenclature = $this->option('businesslayer') ?? 'bo';
 
-        $this->generate($name, $table, $timestamps, $overwrite);
+        $this->generate($name, $table, $timestamps, $overwrite, $businessLayerNomenclature);
         return 0;
     }
 
@@ -117,11 +119,11 @@ class CRUDGenerator extends Command
                 $columns = Schema::getColumnListing($table);
                 $timestamps = in_array('created_at', $columns) ? true : false;
                 $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+                $businessLayerNomenclature = $this->option('businesslayer') ?? 'bo';
 
-                $this->generate($name, 'default', $timestamps, $overwrite);
+                $this->generate($name, 'default', $timestamps, $overwrite, $businessLayerNomenclature);
             }
-        }
-        catch (QueryException $exception) {
+        } catch (QueryException $exception) {
             $this->error("Error: " . $exception->getMessage());
         }
     }
@@ -151,10 +153,15 @@ class CRUDGenerator extends Command
         $overwrite = true;
         if (strtolower($confirmOverwrite) === 'n') {
             $overwrite = false;
-        }
-        elseif (strtolower($confirmOverwrite) !== 'y') {
+        } elseif (strtolower($confirmOverwrite) !== 'y') {
             $this->error("Aborted!");
             return;
+        }
+
+        $businessLayer = $this->ask("Which nomenclature do you want to use for business rules layer? [bo,service]");
+        $businessLayerNomenclature = strtolower($businessLayer);
+        if (($businessLayerNomenclature !== 'bo') && ($businessLayerNomenclature !== 'service')) {
+            $businessLayerNomenclature = 'bo';
         }
 
         $this->info("Please confim this data");
@@ -164,7 +171,7 @@ class CRUDGenerator extends Command
 
         $confirm = $this->ask("Press y to confirm, type N to restart");
         if ($confirm == "y") {
-            $this->generate($name, $table, $timestamps, $overwrite);
+            $this->generate($name, $table, $timestamps, $overwrite, $businessLayerNomenclature);
             return;
         }
         $this->error("Aborted!");
@@ -179,14 +186,21 @@ class CRUDGenerator extends Command
      * @param $overwrite boolean
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function generate($name, $table, $timestamps, $overwrite)
+    protected function generate($name, $table, $timestamps, $overwrite, $businessLayerNomenclature)
     {
         $this->comment("Generating {$name} CRUD");
         $this->comment("...");
-        $this->generator->bo($name, $overwrite);
-        $this->info("Generated {$name} BO!");
-        $this->generator->controller($name, $overwrite);
-        $this->info("Generated {$name} Controller!");
+        if ($businessLayerNomenclature == 'bo') {
+            $this->generator->bo($name, $overwrite);
+            $this->info("Generated {$name} BO!");
+            $this->generator->controller($name, $overwrite);
+            $this->info("Generated {$name} Controller!");
+        } else {
+            $this->generator->service($name, $overwrite);
+            $this->info("Generated {$name} Service!");
+            $this->generator->controllerWithService($name, $overwrite);
+            $this->info("Generated {$name} Controller!");
+        }
         $this->generator->model($name, $table, $timestamps, $overwrite);
         $this->info("Generated {$name} Model!");
         $scopeTraitGenerated = $this->generator->scopeTrait();
@@ -204,12 +218,6 @@ class CRUDGenerator extends Command
         }
         $this->generator->resource($name, $overwrite);
         $this->info("Generated {$name} Resource!");
-        $prepareTraitGenerated = $this->generator->prepareTrait();
-        if ($prepareTraitGenerated) {
-            $this->info("Generated Prepare Trait!");
-        }
-        $this->generator->trait($name, $overwrite);
-        $this->info("Generated {$name} Trait!");
         $this->comment("-----");
     }
 }

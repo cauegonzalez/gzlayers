@@ -27,7 +27,7 @@ trait PrepareTrait
             'object' => $object,
         ];
 
-        $method = "prepare".Str::ucfirst(debug_backtrace()[1]['function']);
+        $method = "prepareDataTo".Str::ucfirst(debug_backtrace()[1]['function']);
         return $this->$method($params);
     }
 }
