@@ -22,7 +22,7 @@ trait {{modelName}}Trait
      * @param array $params
      * @return void
      */
-    public function prepareStore(array $params)
+    public function prepareDataToStore(array $params)
     {
         $requestObject              = $params['request'];
         $classObject                = $params['object'];
@@ -41,14 +41,15 @@ trait {{modelName}}Trait
      * @param array $params
      * @return void
      */
-    public function prepareUpdate(array $params)
+    public function prepareDataToUpdate(array $params)
     {
         $requestObject              = $params['request'];
         $classObject                = $params['object'];
 
         $returnArray = [];
-        // $returnArray['users_id'] = $requestObject->users_id ?? $classObject->users_id;
-        // $returnArray['name']     = $requestObject->name ?? $classObject->name;
+        // $returnArray['users_id']       = $requestObject->users_id ?? $classObject->users_id;
+        // $returnArray['name']           = $requestObject->name ?? $classObject->name;
+        // $returnArray['nullable_field'] = $requestObject->has('nullable_field') ? $requestObject->nullable_field : $classObject->nullable_field;
 
         return $returnArray;
     }

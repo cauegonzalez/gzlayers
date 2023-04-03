@@ -19,7 +19,8 @@ class ControllerGenerator extends Command
     {name=name : Class (singular) for example User}
     {--interactive=false : Interactive mode}
     {--all=false : Interactive mode}
-    {--overwrite=true : If file exists, determine if overwrite}';
+    {--overwrite=true : If file exists, determine if overwrite}
+    {--businesslayer=bo : Determines which nomenclature to use for business layer | Default is BO and the other accepted is Service}';
 
     /**
      * The console command description.
@@ -28,7 +29,7 @@ class ControllerGenerator extends Command
      */
     protected $description = 'Create controller with a multilayer structure';
 
-        /**
+    /**
      *
      * Generator support instance
      *
@@ -89,8 +90,9 @@ class ControllerGenerator extends Command
         // If here, no interactive || all selected
         $name = ucwords($this->argument('name'));
         $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+        $businessLayerNomenclature = $this->option('businesslayer') ?? 'bo';
 
-        $this->generate($name, $overwrite);
+        $this->generate($name, $overwrite, $businessLayerNomenclature);
         return 0;
     }
 
@@ -111,11 +113,11 @@ class ControllerGenerator extends Command
                 $table = str_replace(' ', '', $table);
                 $name = ucwords($this->str->singular($table));
                 $overwrite = ($this->option('overwrite') == 'false' ? false : true);
+                $businessLayerNomenclature = $this->option('businesslayer') ?? 'bo';
 
-                $this->generate($name, $overwrite);
+                $this->generate($name, $overwrite, $businessLayerNomenclature);
             }
-        }
-        catch (QueryException $exception) {
+        } catch (QueryException $exception) {
             $this->error("Error: " . $exception->getMessage());
         }
     }
@@ -137,10 +139,15 @@ class ControllerGenerator extends Command
         $overwrite = true;
         if (strtolower($confirmOverwrite) === 'n') {
             $overwrite = false;
-        }
-        elseif (strtolower($confirmOverwrite) !== 'y') {
+        } elseif (strtolower($confirmOverwrite) !== 'y') {
             $this->error("Aborted!");
             return;
+        }
+
+        $businessLayer = $this->ask("Which nomenclature do you want to use for business rules layer? [bo,service]");
+        $businessLayerNomenclature = strtolower($businessLayer);
+        if (($businessLayerNomenclature !== 'bo') && ($businessLayerNomenclature !== 'service')) {
+            $businessLayerNomenclature = 'bo';
         }
 
         $this->info("Please confim this data");
@@ -149,7 +156,7 @@ class ControllerGenerator extends Command
 
         $confirm = $this->ask("Press y to confirm, type N to restart");
         if ($confirm == "y") {
-            $this->generate($name, $overwrite);
+            $this->generate($name, $overwrite, $businessLayerNomenclature);
             return;
         }
         $this->error("Aborted!");
@@ -161,10 +168,14 @@ class ControllerGenerator extends Command
      * @param $name string Model Name
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function generate($name, $overwrite)
+    protected function generate($name, $overwrite, $businessLayerNomenclature)
     {
         $this->comment("Generating {$name} Controller");
-        $this->generator->controller($name, $overwrite);
+        if ($businessLayerNomenclature == 'bo') {
+            $this->generator->controller($name, $overwrite);
+        } else {
+            $this->generator->controllerWithService($name, $overwrite);
+        }
         $this->info("Generated {$name} Controller!");
     }
 }

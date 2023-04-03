@@ -66,4 +66,14 @@ class {{modelName}}Request extends CustomRulesRequest
             // 'id.required' => 'O id é obrigatório!',
         ];
     }
+
+    /**
+     * @return Array
+     */
+    public function attributes(): Array
+    {
+        return [
+            // 'name' => 'nome',
+        ];
+    }
 }
