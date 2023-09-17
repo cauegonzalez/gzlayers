@@ -146,7 +146,7 @@ class ModelGenerator extends Command
         $choice = $this->choice('Do your table has timestamps column?', ['No', 'Yes'], 0);
         $choice === "Yes" ? $timestamps = true : $timestamps = false;
 
-        $confirmOverwrite = $this->ask("If the file {$name}BO already exists, do you want it to be overwritten? [Y,n]") ?? 'y';
+        $confirmOverwrite = $this->ask("If the model file {$name} already exists, do you want it to be overwritten? [Y,n]") ?? 'y';
 
         $overwrite = true;
         if (strtolower($confirmOverwrite) === 'n') {
