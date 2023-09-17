@@ -134,7 +134,7 @@ class ControllerGenerator extends Command
         $this->comment("This command will guide you through creating your Controller");
         $name = $this->ask('What is name of your Model?');
         $name = ucwords($name);
-        $confirmOverwrite = $this->ask("If the file {$name}BO already exists, do you want it to be overwritten? [Y,n]") ?? 'y';
+        $confirmOverwrite = $this->ask("If the file {$name}Controller already exists, do you want it to be overwritten? [Y,n]") ?? 'y';
 
         $overwrite = true;
         if (strtolower($confirmOverwrite) === 'n') {

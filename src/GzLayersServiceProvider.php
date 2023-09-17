@@ -26,7 +26,7 @@ class GzLayersServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/stubs/' => base_path('resources/stubs/'),
-        ]);
+        ], 'gzlayers-stubs');
     }
 
     /**
